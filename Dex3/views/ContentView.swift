@@ -15,33 +15,40 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
         animation: .default)
     private var pokedex: FetchedResults<Pokemon>
+    
+    @StateObject private var pokemonVM = PokemonViewModel(controller: FetchController())
 
     var body: some View {
-        NavigationStack {
-            List(pokedex) { pokemon in
-                NavigationLink(value: pokemon) {
-                    AsyncImage(url: pokemon.sprite) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 100, height: 100)
+        switch pokemonVM.status {
+        case .success:
+            NavigationStack {
+                List(pokedex) { pokemon in
+                    NavigationLink(value: pokemon) {
+                        AsyncImage(url: pokemon.sprite) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 100, height: 100)
 
-                    Text(pokemon.name!.capitalized)
+                        Text(pokemon.name!.capitalized)
+                    }
+                }
+                .navigationTitle("Pokedex")
+                .navigationDestination(for: Pokemon.self) { pokemon in
+                    PokemonDetail()
+                        .environmentObject(pokemon)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        EditButton()
+                    }
                 }
             }
-            .navigationTitle("Pokedex")
-            .navigationDestination(for: Pokemon.self) { pokemon in
-                PokemonDetail()
-                    .environmentObject(pokemon)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
-                }
-            }
+        default:
+            ProgressView()
         }
     }
 }

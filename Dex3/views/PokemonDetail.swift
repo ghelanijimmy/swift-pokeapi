@@ -69,7 +69,7 @@ struct PokemonDetail: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.white.opacity(0), for: .navigationBar)
+        .toolbarBackground(Color(pokemon.types![0].capitalized).opacity(0.2), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .ignoresSafeArea()
     }
